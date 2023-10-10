@@ -1,24 +1,18 @@
 import fastify from 'fastify'
-import { knex } from './database'
-import crypto from 'node:crypto'
+import { Diet } from './routes/Diet'
+import { env } from './env'
+import cookie from '@fastify/cookie'
 
 const app = fastify()
 
-app.get('/', async () => {
-  const tables = await knex('users')
-    .insert({
-      id: crypto.randomUUID(),
-      name: 'X-tudo',
-      description: 'Xis completo da lancheira do bairro',
-      in_diet: false,
-    })
-    .returning('*')
-  return tables
+app.register(cookie)
+app.register(Diet, {
+  prefix: '/diet',
 })
 
 app
   .listen({
-    port: 3333,
+    port: env.PORT,
   })
   .then(() => {
     console.log('Server is running on port 3333')
